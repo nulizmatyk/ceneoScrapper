@@ -3,7 +3,44 @@ from tkinter import *
 from bs4 import BeautifulSoup
 import json
 from time import sleep 
-
+import MySQLdb
+# ##########################################################################################
+#Save class's base data to the database
+# Open database connection
+HOST = "localhost"
+USERNAME = "root"
+PASSWORD = "Mateusz"
+DATABASE = "scraping_sample"
+db = MySQLdb.connect(HOST, USERNAME, PASSWORD, DATABASE)
+# prepare a cursor object using cursor() method
+cursor = db.cursor()
+# Prepare SQL query to INSERT a record into the database.
+sql = "INSERT INTO classes(name_of_class, type_of_course, lecturer, number, short_text, choice_term, hours_per_week_in_term, expected_num_of_participants, maximum_participants, assignment, lecture_id, credit_points, hyperlink, language, created_at) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', {})".format(name_of_class, type_of_course, lecturer, number, short_text, choice_term, hours_per_week_in_term, expected_num_of_participants, maximum_participants, assignment, lecture_id, credit_points, hyperlink, language, 'NOW()')
+try:
+ # Execute the SQL command
+ cursor.execute(sql)
+ # Commit your changes in the database
+ db.commit()
+except:
+ # Rollback in case there is any error
+ db.rollback()
+ #get the just inserted class id
+sql = "SELECT LAST_INSERT_ID()"
+try:
+ # Execute the SQL command
+ cursor.execute(sql)
+ # Get the result
+ result = cursor.fetchone()
+ # Set the class id to the just inserted class
+ class_id = result[0]
+except:
+ # Rollback in case there is any error
+ db.rollback()
+ # disconnect from server
+ db.close()
+ # on error set the class_id to -1
+ class_id = -1
+#  ##############################################################################################
 #Adding a User-Agent String in the request to prevent getting blocked while scraping 
 
 user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'
