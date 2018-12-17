@@ -3,7 +3,6 @@ import urllib.request
 from tkinter import *
 from bs4 import BeautifulSoup
 import json
-from time import sleep 
 import MySQLdb
 # ##########################################################################################
 #Save class's base data to the database
@@ -171,7 +170,8 @@ def transform():
 def exportDatatoJson():
     with open('ceneo.json', 'w') as outfile:
         json.dump(extractedData, outfile, indent=4)
-
+    infoText.delete('1.0',END)
+    infoText.insert(1.0, "dane zostały pomyślnie wyeksportowane")    
     
 
 
